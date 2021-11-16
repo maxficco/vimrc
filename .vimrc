@@ -18,7 +18,6 @@ endif
 call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'
 Plug 'morhetz/gruvbox'
-Plug 'valloric/youcompleteme'
 call plug#end()
 
 colorscheme gruvbox
