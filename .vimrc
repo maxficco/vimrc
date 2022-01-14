@@ -69,6 +69,6 @@ noremap ,m :NERDTreeFind<cr>
 noremap ,f :Files<cr>
 noremap ,g :GFiles<cr>
 noremap ,b :Buffers<cr>
-autocmd filetype python noremap ,; :w<cr> :!python3 %<cr>
-autocmd filetype cpp noremap ,; :w<cr> :!g++ % -std=c++11 && ./a.out<cr>
-autocmd filetype java noremap ,; :w<cr> :!javac % && java %<cr>
+autocmd filetype python noremap ,; :!python3 %<cr>
+autocmd filetype cpp noremap ,; :!g++ % -std=c++11 && ./a.out<cr>
+autocmd filetype java noremap ,; :!javac % && java %<cr>
