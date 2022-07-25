@@ -3,25 +3,20 @@ set tabstop=4 softtabstop=4
 set shiftwidth=4
 set expandtab
 set smartindent
-set nu
 set nowrap
+set number
 set noswapfile
 set smartcase
 set incsearch
 set cursorline
 set backspace=indent,eol,start
+set fillchars+=vert:│
 
-" weird mac notifications
-set visualbell t_vb=
-if has("autocmd") && has("gui")
-    au GUIEnter * set t_vb=
-endif
-
-" automatically install vim plug
+" Automatically install vim plug
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
-  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 " Plugins
@@ -34,27 +29,21 @@ Plug 'itchyny/lightline.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " run :CocInstall coc-tabnine
+Plug 'jiangmiao/auto-pairs'
 call plug#end()
 
 " NERDTree stuff
 let NERDTreeMinimalUI=1
 let NERDTreeChDirMode = 3
 let g:DevIconsEnableFoldersOpenClose = 1
-autocmd BufEnter * silent! lcd %:p:h
-" Start NERDTree when Vim is started without file arguments.
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
-" Exit Vim if NERDTree is the only window remaining in the only tab.
-autocmd BufEnter * if tabpagenr('$') == 1 
+autocmd BufEnter * if tabpagenr('$') == 1 " Exit Vim if NERDTree is the only window remaining in the only tab.
       \ && winnr('$') == 1 
       \ && exists('b:NERDTree') 
       \ && b:NERDTree.isTabTree()
       \ | quit | endif
 
-" change fzf window colors
-let g:fzf_colors= {
-      \  'border': ['fg', 'Type' ],
-      \  'gutter': ['fg', 'Normal' ] }
+" custom window colors (and syntax highlighting with bat) for fzf
+let $FZF_DEFAULT_OPTS="--color=dark,fg:-1,bg:-1,hl:#5fff87,fg+:-1,bg+:-1,hl+:#ffaf5f,info:#af87ff,prompt:#5fff87,pointer:#ff87d7,marker:#ff87d7,spinner:#ff87d7 --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
 
 " colorsheme settings
 colorscheme gruvbox
@@ -63,6 +52,7 @@ set background=dark
 " for lightline
 set laststatus=2
 set noshowmode
+set ttimeoutlen=1
 
 " key bindings
 noremap ,n :NERDTreeToggle<cr>
@@ -70,6 +60,23 @@ noremap ,m :NERDTreeFind<cr>
 noremap ,f :Files<cr>
 noremap ,g :GFiles<cr>
 noremap ,b :Buffers<cr>
+nnoremap <space> za
 autocmd filetype python noremap ,; :!python3 %<cr>
 autocmd filetype cpp noremap ,; :!g++ % -std=c++11 && ./a.out<cr>
 autocmd filetype java noremap ,; :!javac % && java %<cr>
+autocmd filetype python noremap <: :below term++rows=15 python3 %<cr>
+autocmd filetype cpp noremap <: :!g++ % -std=c++11<cr> :below term++rows=15 ./a.out<cr>
+autocmd filetype java noremap <: :!javac %<cr> :below term++rows=15 java %<cr>
+for key in ['<Up>', '<Down>', '<Left>', '<Right>']
+    exec 'noremap' key '<Nop>'
+    exec 'inoremap' key '<Nop>'
+    exec 'cnoremap' key '<Nop>'
+endfor
+
+" custom functions
+function Go()
+    execute "below term++rows=11"
+    execute "NERDTreeToggle"
+    execute "wincmd l"
+endfunction
+command! Go call Go()
