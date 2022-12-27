@@ -5,6 +5,11 @@ set expandtab
 set smartindent
 set nowrap
 set number
+augroup numbertoggle "relative line numbers only in normal/visual mode
+  autocmd!
+  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+augroup END
 set noswapfile
 set smartcase
 set incsearch
@@ -24,7 +29,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'
 Plug 'ryanoasis/vim-devicons'
 Plug 'morhetz/gruvbox'
-Plug 'NLKNguyen/papercolor-theme'
 Plug 'itchyny/lightline.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -62,16 +66,23 @@ noremap ,g :GFiles<cr>
 noremap ,b :Buffers<cr>
 nnoremap <space> za
 autocmd filetype python noremap ,; :!python3 %<cr>
-autocmd filetype cpp noremap ,; :!g++ % -std=c++11 && ./a.out<cr>
+autocmd filetype python noremap ,: :below term++rows=15 python3 %<cr>
 autocmd filetype java noremap ,; :!javac % && java %<cr>
-autocmd filetype python noremap <: :below term++rows=15 python3 %<cr>
-autocmd filetype cpp noremap <: :!g++ % -std=c++11<cr> :below term++rows=15 ./a.out<cr>
-autocmd filetype java noremap <: :!javac %<cr> :below term++rows=15 java %<cr>
+autocmd filetype java noremap ,: :!javac %<cr> :below term++rows=15 java %<cr>
+autocmd filetype cpp noremap ,; :!g++ % -std=c++11 && ./a.out<cr>
+autocmd filetype cpp noremap ,: :!g++ % -std=c++11<cr> :below term++rows=15 ./a.out<cr>
+autocmd filetype rust noremap ,; :!rustc % && ./%:r<cr>
+autocmd filetype rust noremap ,: :!rustc %<cr> :below term++rows=15 ./%:r<cr>
 for key in ['<Up>', '<Down>', '<Left>', '<Right>']
     exec 'noremap' key '<Nop>'
     exec 'inoremap' key '<Nop>'
     exec 'cnoremap' key '<Nop>'
 endfor
+" autocomplete replace Ctrl n
+inoremap <expr> <Tab> pumvisible() ? "<C-n>" :"<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "<C-p>" :"<S-Tab>"
+inoremap <expr> <CR> pumvisible() ? "<C-y>" :"<CR>"
+inoremap <expr> <Esc> pumvisible() ? "<C-e>" : "<Esc>"
 
 " custom functions
 function Go()
