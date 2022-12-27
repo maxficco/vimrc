@@ -33,7 +33,7 @@ Plug 'itchyny/lightline.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " run :CocInstall coc-tabnine
-Plug 'jiangmiao/auto-pairs'
+Plug 'tmsvg/pear-tree'
 call plug#end()
 
 " NERDTree stuff
@@ -78,11 +78,10 @@ for key in ['<Up>', '<Down>', '<Left>', '<Right>']
     exec 'inoremap' key '<Nop>'
     exec 'cnoremap' key '<Nop>'
 endfor
-" autocomplete replace Ctrl n
+" autocomplete - replace Ctrl n & y
 inoremap <expr> <Tab> pumvisible() ? "<C-n>" :"<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "<C-p>" :"<S-Tab>"
-inoremap <expr> <CR> pumvisible() ? "<C-y>" :"<CR>"
-inoremap <expr> <Esc> pumvisible() ? "<C-e>" : "<Esc>"
+inoremap <expr> <space> pumvisible() ? "<C-y>" :"<space>"
 
 " custom functions
 function Go()
