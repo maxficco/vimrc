@@ -87,8 +87,6 @@ noremap <leader>m :NERDTreeFind<cr>
 noremap <leader>f :FZF<cr>
 noremap <leader>F :FZF!<cr>
 nnoremap <space> za
-nnoremap <leader><space> :ChecklistToggleCheckbox<cr>
-vnoremap <leader><space> :ChecklistToggleCheckbox<cr>
 autocmd filetype python noremap <leader>; :!python3 %<cr>
 autocmd filetype java noremap <leader>; :!javac % && java %<cr>
 autocmd filetype cpp noremap <leader>; :!g++ % -std=c++11 && ./a.out<cr>
