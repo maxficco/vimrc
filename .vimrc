@@ -37,6 +37,7 @@ Plug 'junegunn/seoul256.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'} 
 Plug 'psliwka/vim-smoothie'
 Plug 'tmsvg/pear-tree'
+Plug 'prashanthellina/follow-markdown-links'
 call plug#end()
 
 " NERDTree stuff
@@ -86,6 +87,8 @@ noremap <leader>m :NERDTreeFind<cr>
 noremap <leader>f :FZF<cr>
 noremap <leader>F :FZF!<cr>
 nnoremap <space> za
+nnoremap <leader><space> :ChecklistToggleCheckbox<cr>
+vnoremap <leader><space> :ChecklistToggleCheckbox<cr>
 autocmd filetype python noremap <leader>; :!python3 %<cr>
 autocmd filetype java noremap <leader>; :!javac % && java %<cr>
 autocmd filetype cpp noremap <leader>; :!g++ % -std=c++11 && ./a.out<cr>
@@ -128,3 +131,19 @@ function Go()
     execute "wincmd l"
 endfunction
 command! Go call Go()
+
+function! ToggleCheckbox()
+  let line = getline('.')
+
+  if line =~ '- \[ \]'
+    call setline('.', substitute(line, '- \[ \]', '- \[x\]', ''))
+  elseif line =~ '- \[x\]'
+    call setline('.', substitute(line, '- \[x\]', '- \[ \]', ''))
+  elseif line =~ '- '
+    call setline('.', substitute(line, '- ', '- \[ \] ', ''))
+  endif
+endf
+
+autocmd filetype markdown noremap <Leader><space> :call ToggleCheckbox()<CR>
+autocmd FileType markdown setl comments=b:*,b:-,b:+,n:>
+autocmd FileType markdown setl formatoptions+=r
