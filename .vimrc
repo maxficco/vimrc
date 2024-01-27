@@ -5,6 +5,10 @@ set shiftwidth=4
 set expandtab
 set smartindent
 set nowrap
+augroup WrapLinesInMarkdown
+    autocmd!
+    autocmd FileType markdown setlocal wrap
+augroup END
 set number
 set noswapfile
 set smartcase
@@ -24,6 +28,7 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
     silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
+au BufLeave * silent! wall " autosave when switching buffers
 
 " Plugins
 call plug#begin('~/.vim/plugged')
@@ -91,6 +96,8 @@ autocmd filetype python noremap <leader>; :!python3 %<cr>
 autocmd filetype java noremap <leader>; :!javac % && java %<cr>
 autocmd filetype cpp noremap <leader>; :!g++ % -std=c++11 && ./a.out<cr>
 autocmd filetype rust noremap <leader>; :!rustc % && ./%:r<cr>
+autocmd filetype markdown noremap <expr> k (v:count == 0 ? 'gk' : 'k')
+autocmd filetype markdown noremap <expr> j (v:count == 0 ? 'gj' : 'j') 
 for key in ['<Up>', '<Down>', '<Left>', '<Right>']
     exec 'noremap' key '<Nop>'
     exec 'inoremap' key '<Nop>'
@@ -123,12 +130,10 @@ inoremap <c-l> <plug>(coc-snippets-expand)
 
 
 " custom functions
-function Go()
-    execute "below term++rows=11"
-    execute "NERDTreeToggle"
-    execute "wincmd l"
+function Gitacp() " git add, commit, and push
+    execute "!git add . && git commit -m 'vim' && git push"
 endfunction
-command! Go call Go()
+command! ACP call Gitacp()
 
 function! ToggleCheckbox()
   let line = getline('.')
@@ -145,3 +150,23 @@ endf
 autocmd filetype markdown noremap <Leader><space> :call ToggleCheckbox()<CR>
 autocmd FileType markdown setl comments=b:*,b:-,b:+,n:>
 autocmd FileType markdown setl formatoptions+=r
+
+" type :L to open a file at ~/notes/Stickies/<current date>
+fun! OpenLog()
+    let fname = strftime("%Y-%m-%d") . ".md"
+    if !filereadable(expand("~/notes/Stickies/" . fname))
+        exe "!cp ~/notes/Templates/DailyNote.md ~/notes/Stickies/" . fname
+    endif
+    exe ":e ~/notes/Stickies/" . fname
+endfun
+command L call OpenLog()
+
+augroup AutoSaveGroup " https://vi.stackexchange.com/questions/13864/bufwinleave-mkview-with-unnamed-file-error-32
+  autocmd!
+  " view files are about 500 bytes
+  " bufleave but not bufwinleave captures closing 2nd tab
+  " nested is needed by bufwrite* (if triggered via other autocmd)
+  " BufHidden for compatibility with `set hidden`
+  autocmd BufWinLeave,BufLeave,BufWritePost,BufHidden,QuitPre ?* nested silent! mkview!
+  autocmd BufWinEnter ?* silent! loadview
+augroup end
